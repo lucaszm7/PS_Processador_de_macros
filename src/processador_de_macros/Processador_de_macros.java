@@ -19,14 +19,14 @@ public class Processador_de_macros {
         
         try {
             //INICIALIZA ARQUIVO DE SAIDA
-            arquivo_saida.delete();
+            
             arquivo_saida.createNewFile();
             
             //LEITURA ARQUIVO DE ENTRADA
             Scanner reader = new Scanner(arquivo_entrada);
             
             //PARA ESCREVER NO ARQUIVO DE SAIDA
-            FileWriter fileWriter = new FileWriter(arquivo_saida);
+            FileWriter fileWriter = new FileWriter(arquivo_saida, false);
             BufferedWriter escrever = new BufferedWriter(fileWriter);
             
             //COPIANDO ARQUIVO DE ENTRADA PARA UM VETOR

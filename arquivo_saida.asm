@@ -1,6 +1,7 @@
-OLA MUNDO ESCREVBENDOadd 10
+add 10
 sub 15
-br fim
+CREUSA
 jz 15
 //comentario
 fim: stop
+JUCICARA
