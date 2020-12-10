@@ -1,7 +1,8 @@
-add 10
-sub 15
+ADD 10
+SUB 15
 CREUSA
-jz 15
-//comentario
-fim: stop
+JZ 15
+//COMENTARIO
+FIM: STOP
 JUCICARA
+ADD @20 10

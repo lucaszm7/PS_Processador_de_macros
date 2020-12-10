@@ -6,7 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import java.util.Map;
+import java.util.HashMap;
 
 public class Processador_de_macros {
 
@@ -16,6 +20,9 @@ public class Processador_de_macros {
         File arquivo_entrada = new File(diretorio);
         File arquivo_saida = new File("arquivo_saida.asm");
         List<String> conteudo = new ArrayList<>();
+        
+        //PARA ARMAZENAR AS MACROS
+        Map<String, String> tabela_de_macros = new HashMap<String, String>();
         
         try {
             //INICIALIZA ARQUIVO DE SAIDA
@@ -30,11 +37,26 @@ public class Processador_de_macros {
             BufferedWriter escrever = new BufferedWriter(fileWriter);
             
             //COPIANDO ARQUIVO DE ENTRADA PARA UM VETOR
-            String line;
+            //COLOCANDO P/ UPPER CASE
+            
             while(reader.hasNextLine()) {
-                line = reader.nextLine();
+                String line = reader.nextLine();
+                line = line.toUpperCase();
+                //String[] line_coment = line.split("//");
+                //String[] line_word = line.split(" ");
                 conteudo.add(line);
+                
             }
+            
+            System.out.println(conteudo.get(0));
+            
+            //============================
+            //PROCESSADOR DE MACROS EM SI:
+            //============================
+            
+            String teste = new String();
+            teste = teste.concat("TESTE");
+            
             
             //ESCREVENDO NO ARQUIVO DE SAIDA
             for (String iterator : conteudo) {

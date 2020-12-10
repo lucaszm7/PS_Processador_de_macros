@@ -5,3 +5,4 @@ jz 15
 //comentario
 fim: stop
 JUCICARA
+add @20 10
