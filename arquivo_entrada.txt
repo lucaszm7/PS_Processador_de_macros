@@ -1,8 +1,12 @@
 add 10
 sub 15
 CREUSA
-jz 15
-//comentario
+jz 15 //comentario
 fim: stop
-JUCICARA
+MCDEFN
+L INCR A
+L LOAD A
+ADD @1
+STORE
+MCEND
 add @20 10

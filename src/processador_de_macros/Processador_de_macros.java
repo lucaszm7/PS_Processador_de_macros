@@ -22,7 +22,7 @@ public class Processador_de_macros {
         List<String> conteudo = new ArrayList<>();
         
         //PARA ARMAZENAR AS MACROS
-        Map<String, String> tabela_de_macros = new HashMap<String, String>();
+        Map<String, List<String>> tabela_de_macros = new HashMap<String, List<String>>();
         
         try {
             //INICIALIZA ARQUIVO DE SAIDA
@@ -54,8 +54,25 @@ public class Processador_de_macros {
             //PROCESSADOR DE MACROS EM SI:
             //============================
             
-            String teste = new String();
-            teste = teste.concat("TESTE");
+            //PEGA A DEFINIÇÃO DE MACRO
+            int j;
+            String[] label_macro;
+            for(int i = 0; i < conteudo.size(); ++i){
+                if (conteudo.get(i).compareTo("MCDEFN") == 0){
+                    for(j = i; conteudo.get(j).compareTo("MCEND") != 0 || j > conteudo.size(); ++j){
+                        
+                    }
+                    ++j;
+                    label_macro = conteudo.get(i).split(" ");
+                    tabela_de_macros.put(label_macro[0], conteudo.subList(i+1, j-1));
+                    
+                    System.out.println(conteudo.subList(i, j));
+                    
+                    conteudo.removeAll(conteudo.subList(i, j));
+                        
+                    //System.out.println(tabela_de_macros);
+                }
+            }
             
             
             //ESCREVENDO NO ARQUIVO DE SAIDA
