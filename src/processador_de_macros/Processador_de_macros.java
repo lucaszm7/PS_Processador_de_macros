@@ -8,7 +8,6 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import java.util.Map;
 import java.util.HashMap;
 
@@ -17,6 +16,8 @@ public class Processador_de_macros {
     public static File run(String diretorio){
         
         //INICIALIZA ARQUIVA DE ENTRADA
+        List<Macro> macros = new ArrayList<>();
+        
         File arquivo_entrada = new File(diretorio);
         File arquivo_saida = new File("arquivo_saida.asm");
         List<String> conteudo = new ArrayList<>();
