@@ -56,41 +56,53 @@ public class Processador_de_macros {
             //1 PASSAGEM - DEFINIÇÃO
             //PEGA A DEFINIÇÃO DE MACRO
             int j;
-            String[] line;
+            String[] line_args;
             String line_definicao;
+            String[] line_label;
             for(int i = 0; i < conteudo.size(); ++i){
                 if (conteudo.get(i).compareTo("MCDEFN") == 0){
                     for(j = i+1; conteudo.get(j).compareTo("MCEND") != 0 || j > conteudo.size(); ++j){
                         
-                        line = conteudo.get(j).split(" ");
+                        line_args = conteudo.get(j).split(" ", 2);
                         line_definicao = conteudo.get(j);
+                        line_label = conteudo.get(j).split(": ");
                         
-                        //PEGA OS ARGUMENTOS
+                        //============================
+                        //TRATAMENTO DA PRIMEIRA LINHA
+                        //============================
+                        
+                        //PEGA OS LABELS
                         if(macro.nome == null){
-                            macro.nome = line[0];
-                            for(int l = 1; l < line.length; ++l){
-                                macro.argumentos.add(line[l]);
-                                
+                            if (line_label.length > 1){
+                                line_args = line_label[1].split(" ", 2);
+                                line_label = line_label[0].split(",");
+                                for(int l = 0; l < line_label.length; ++l){
+                                    line_label[l] = line_label[l].replace(" ", "");
+                                    macro.labels.add(line_label[l]);
+                                }
+                            }
+                            
+                            //PEGA O NOME DA MACRO
+                            macro.nome = line_args[0];
+                            
+                            //PEGA OS ARGUMENTOS
+                            
+                            line_args = line_args[1].split(",");
+                            for(int l = 0; l < line_args.length; ++l){
+                                line_args[l] = line_args[l].replace(" ", "");
+                                macro.argumentos.add(line_args[l]);
                             }
                         }
                         //PEGA A DEFINICAO DA MACRO
-                        if (line[0].compareTo(macro.nome) != 0){
+                        else {
                             macro.definicao.add(line_definicao);
-                            /*for (int k = 0; k < line.length; ++k){
-                                macro.definicao.add(line[k]);
-                            }*/
                         }
-                        
                     }
-                    
-                    //REMOVE AS VIRGULAS DOS ARGUMENTOS
-                    for(int k = 0; k < macro.argumentos.size(); ++k){
-                        macro.argumentos.set(k, macro.argumentos.get(k).replace(",", ""));
-                    }
-                    
+
                     System.out.println(macro.nome);
                     System.out.println(macro.definicao);
                     System.out.println(macro.argumentos);
+                    System.out.println(macro.labels);
                     
                     conteudo.removeAll(conteudo.subList(i, j));
                 }

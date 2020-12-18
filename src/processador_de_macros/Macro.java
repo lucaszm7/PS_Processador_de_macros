@@ -7,4 +7,5 @@ public class Macro {
     public String nome;
     public List<String> definicao = new ArrayList<>();
     public List<String> argumentos = new ArrayList<>();
+    public List<String> labels = new ArrayList<>();
 }

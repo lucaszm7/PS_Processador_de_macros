@@ -4,9 +4,12 @@ CREUSA
 jz 15 //comentario
 fim: stop
 MCDEFN
-INCR A, b, c
-L LOAD A
-ADD b c
+label: macrinha arg1, arg2, arg3, arg4
+L LOAD arg1
+br label
+brnz label3
+br label2
+ADD arg2, arg3
 STORE
 MCEND
 add @20 10
