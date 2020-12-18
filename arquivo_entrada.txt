@@ -4,9 +4,10 @@ CREUSA
 jz 15 //comentario
 fim: stop
 MCDEFN
-L INCR A
+INCR A, b, c
 L LOAD A
-ADD @1
+ADD b c
 STORE
 MCEND
 add @20 10
+sub @30 10

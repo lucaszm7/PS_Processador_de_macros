@@ -15,15 +15,15 @@ public class Processador_de_macros {
 
     public static File run(String diretorio){
         
-        //INICIALIZA ARQUIVA DE ENTRADA
-        List<Macro> macros = new ArrayList<>();
+        Macro macro = new Macro();
         
+        //INICIALIZA ARQUIVA DE ENTRADA
         File arquivo_entrada = new File(diretorio);
         File arquivo_saida = new File("arquivo_saida.asm");
+        
+        //VETOR QUE ARMAZENA O CONTEUDO DO ARQUIVO DE ENTRADA
         List<String> conteudo = new ArrayList<>();
         
-        //PARA ARMAZENAR AS MACROS
-        Map<String, List<String>> tabela_de_macros = new HashMap<String, List<String>>();
         
         try {
             //INICIALIZA ARQUIVO DE SAIDA
@@ -49,38 +49,50 @@ public class Processador_de_macros {
                 
             }
             
-            System.out.println(conteudo.get(0));
-            
             //============================
             //PROCESSADOR DE MACROS EM SI:
             //============================
             
+            //1 PASSAGEM - DEFINIÇÃO
             //PEGA A DEFINIÇÃO DE MACRO
             int j;
             String[] label_macro;
             for(int i = 0; i < conteudo.size(); ++i){
                 if (conteudo.get(i).compareTo("MCDEFN") == 0){
-                    for(j = i; conteudo.get(j).compareTo("MCEND") != 0 || j > conteudo.size(); ++j){
+                    for(j = i+1; conteudo.get(j).compareTo("MCEND") != 0 || j > conteudo.size(); ++j){
                         
+                        label_macro = conteudo.get(j).split(" ");
+                        
+                        //PEGA OS ARGUMENTOS
+                        if(macro.nome == null){
+                            macro.nome = label_macro[0];
+                            for(int l = 1; l < label_macro.length; ++l){
+                                macro.argumentos.add(label_macro[l]);
+                            }
+                        }
+                        
+                        //PEGA A DEFINICAO DA MACRO
+                        for (int k = 0; k < label_macro.length; ++k){
+                            macro.definicao.add(label_macro[k]);
+                        }
                     }
-                    ++j;
-                    label_macro = conteudo.get(i).split(" ");
-                    tabela_de_macros.put(label_macro[0], conteudo.subList(i+1, j-1));
                     
-                    System.out.println(conteudo.subList(i, j));
+                    
+                    //System.out.println(conteudo.subList(i, j));
+                    System.out.println(macro.nome);
                     
                     conteudo.removeAll(conteudo.subList(i, j));
-                        
-                    //System.out.println(tabela_de_macros);
+                }
+                else {
+                    escrever.write(conteudo.get(i));
+                    escrever.newLine();
                 }
             }
             
             
-            //ESCREVENDO NO ARQUIVO DE SAIDA
-            for (String iterator : conteudo) {
-                escrever.write(iterator);
-                escrever.newLine();
-            }
+            //2 PASSAGEM - EXPANSÃO
+            //=====================
+            
             
             //SALVANDO ARQUIVO DE SAIDA
             escrever.close();

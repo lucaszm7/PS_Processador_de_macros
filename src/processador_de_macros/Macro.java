@@ -6,5 +6,5 @@ import java.util.List;
 public class Macro {
     public String nome;
     public List<String> definicao = new ArrayList<>();
-    int nArgumentos;
+    public List<String> argumentos = new ArrayList<>();
 }
