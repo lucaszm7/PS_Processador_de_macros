@@ -1,13 +1,14 @@
 add 10
 sub 15
 CREUSA
+PULO: PULADOR
 jz 15 //comentario
 
 macrinha a, b, c, d
 
-fim: stop
+add @2
 MCDEFN
-macrinha arg1, arg2, arg3, arg4
+label1: macrinha arg1, arg2, arg3, arg4
 L LOAD arg1
 br arg1
 brnz arg3

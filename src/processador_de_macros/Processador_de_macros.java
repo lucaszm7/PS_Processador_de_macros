@@ -115,7 +115,7 @@ public class Processador_de_macros {
                 String[] aux_linha = conteudo.get(i).split(" ", 2);
                 
                 //SE TEM LABEL
-                if (aux_linha[0].endsWith(":")){
+                if (aux_linha[0].endsWith("xxx")){
                     //------------------------
                 }
                 
@@ -123,6 +123,8 @@ public class Processador_de_macros {
                 else if (aux_linha[0].compareTo(macro.nome) == 0){
                     
                     //PASSA OS ARGUMENTOS P/ A CHAMADA
+                    macro_chamada.nome = aux_linha[0];
+                    
                     String[] aux_labels = aux_linha[1].split(",");
                     for(int l = 0; l < aux_labels.length; ++l){
                         aux_labels[l] = aux_labels[l].replace(" ", "");
