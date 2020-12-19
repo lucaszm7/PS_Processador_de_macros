@@ -43,11 +43,13 @@ public class Processador_de_macros {
             while(reader.hasNextLine()) {
                 String line = reader.nextLine();
                 line = line.toUpperCase();
-                //String[] line_coment = line.split("//");
-                //String[] line_word = line.split(" ");
-                conteudo.add(line);
+                //SEM LINHA VAZIA
+                //if(!line.isEmpty()){
+                    conteudo.add(line);
+                //}
                 
             }
+            
             
             //============================
             //PROCESSADOR DE MACROS EM SI:
@@ -98,29 +100,81 @@ public class Processador_de_macros {
                             macro.definicao.add(line_definicao);
                         }
                     }
-
-                    System.out.println(macro.nome);
-                    System.out.println(macro.definicao);
-                    System.out.println(macro.argumentos);
-                    System.out.println(macro.labels);
-                    
-                    conteudo.removeAll(conteudo.subList(i, j));
+                    //PRINTLN
+                    //macro.print();
+                    conteudo.removeAll(conteudo.subList(i, j+1));
                 }
+            }
+            
+            //=====================
+            //2 PASSAGEM - EXPANSÃO
+            //=====================
+            
+            Macro macro_chamada = new Macro();
+            for (int i = 0; i < conteudo.size(); ++i){
+                String[] aux_linha = conteudo.get(i).split(" ", 2);
+                
+                //SE TEM LABEL
+                if (aux_linha[0].endsWith(":")){
+                    //------------------------
+                }
+                
+                //SE NÃO TEM LABEL
+                else if (aux_linha[0].compareTo(macro.nome) == 0){
+                    
+                    //PASSA OS ARGUMENTOS P/ A CHAMADA
+                    String[] aux_labels = aux_linha[1].split(",");
+                    for(int l = 0; l < aux_labels.length; ++l){
+                        aux_labels[l] = aux_labels[l].replace(" ", "");
+                        macro_chamada.argumentos.add(aux_labels[l]);
+                    }
+                    
+                    //PASSA A DEFINIÇÃO P/ A CHAMADA
+                    for(int l = 0; l < macro.definicao.size(); ++l){
+                        macro_chamada.definicao.add(macro.definicao.get(l));
+                        //System.out.println(macro_chamada.definicao.get(l));
+                    }
+                    
+                    //SUBSTITUI OS ARGUMENTOS
+                    for(int l = 0; l < macro_chamada.definicao.size(); ++l){
+                        //macro_chamada.definicao.set(l, macro_chamada.definicao.get(l).replace(macro.labels.get(l), macro_chamada.labels.get(l)));
+                        for (int k = 0; k < macro_chamada.argumentos.size(); ++k){
+                            String replace = macro_chamada.definicao.get(l).replace(macro.argumentos.get(k), macro_chamada.argumentos.get(k));
+                            System.out.println("L = " + l);
+                            System.out.println("K = " + k);
+                            System.out.println("REPLACE = " + replace);
+                            System.out.println("CHAMADA DEFINICAO(K) = " + macro_chamada.definicao.get(l));
+                            if (replace.compareTo(macro_chamada.definicao.get(l)) != 0){
+                                System.out.println("DIFERENTE");
+                                macro_chamada.definicao.set(l, replace);
+                            }
+                        }
+                        
+                        //System.out.println(macro_chamada.definicao.get(l).replace("ARG1", "BUNDA"));
+                        //System.out.println("REPLACE - " + replace);
+                    }
+                    
+                    //EXPANDE A MACRO
+                    for(int l = 0; l < macro_chamada.definicao.size(); ++l){
+                        escrever.write(macro_chamada.definicao.get(l));
+                        escrever.newLine();
+                    }
+                }
+                
+                //NÃO É UMA CHAMADA DE MACRO
+                //ESCREVENDO NO ARQUIVO DE SAIDA
                 else {
                     escrever.write(conteudo.get(i));
                     escrever.newLine();
                 }
             }
             
-            
-            //2 PASSAGEM - EXPANSÃO
             //=====================
-            
-            
             //SALVANDO ARQUIVO DE SAIDA
             escrever.close();
             fileWriter.close();
-            
+            macro.print();
+            macro_chamada.print();
         }
         catch(IOException ex){
             System.out.println(ex);

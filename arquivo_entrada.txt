@@ -2,14 +2,19 @@ add 10
 sub 15
 CREUSA
 jz 15 //comentario
+
+macrinha a, b, c, d
+
 fim: stop
 MCDEFN
-label: macrinha arg1, arg2, arg3, arg4
+macrinha arg1, arg2, arg3, arg4
 L LOAD arg1
-br label
-brnz label3
-br label2
-ADD arg2, arg3
+br arg1
+brnz arg3
+br arg4
+jz arg1
+add arg3
+ADD arg2
 STORE
 MCEND
 add @20 10
