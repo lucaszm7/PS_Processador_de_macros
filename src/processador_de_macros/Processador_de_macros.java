@@ -23,6 +23,7 @@ public class Processador_de_macros {
         
         //VETOR QUE ARMAZENA O CONTEUDO DO ARQUIVO DE ENTRADA
         List<String> conteudo = new ArrayList<>();
+        List<String> lista_escrita = new ArrayList<>();
         
         
         try {
@@ -149,6 +150,7 @@ public class Processador_de_macros {
                     
                     //SE NÃO TEM LABEL
                     if (aux_linha[0].compareTo(iterator.nome) == 0){
+                        
                         flag_chamada = true;
                         
                         //PASSA OS ARGUMENTOS P/ A CHAMADA
@@ -193,24 +195,31 @@ public class Processador_de_macros {
                                 }
                             }
                         }
-
+                        
+                        conteudo.remove(i);
                         //EXPANDE A MACRO
                         for(int l = 0; l < macro_chamada.definicao.size(); ++l){
-                            escrever.write(macro_chamada.definicao.get(l));
-                            escrever.newLine();
+                            conteudo.add(i+l, macro_chamada.definicao.get(l));
+                            System.out.println(conteudo.get(i+l));
+                            lista_escrita.add(macro_chamada.definicao.get(l));
                         }
+                        i = 0;
                     }
                 }
                 //NÃO É UMA CHAMADA DE MACRO
                 //ESCREVENDO NO ARQUIVO DE SAIDA
-                if (!flag_chamada) {
-                    escrever.write(conteudo.get(i));
-                    escrever.newLine();
-                }
+                //if (!flag_chamada) {
+                  //  lista_escrita.add(conteudo.get(i));
+                //}
                 flag_chamada = false;
             }
             
             
+            
+            for (String iterator : conteudo){
+                escrever.write(iterator);
+                escrever.newLine();
+            }
             
             macros.forEach(iterator -> {
                 iterator.print();
