@@ -16,7 +16,6 @@ public class Processador_de_macros {
     public static File run(String diretorio){
         
         List<Macro> macros = new ArrayList<>();
-        Macro macro = new Macro();
         
         //INICIALIZA ARQUIVA DE ENTRADA
         File arquivo_entrada = new File(diretorio);
@@ -51,7 +50,6 @@ public class Processador_de_macros {
                 
             }
             
-            
             //============================
             //PROCESSADOR DE MACROS EM SI:
             //============================
@@ -66,10 +64,10 @@ public class Processador_de_macros {
                 if (conteudo.get(i).compareTo("MCDEFN") == 0){
                     macrinho.MCDEFN = i;
                     for(int j = i+1; conteudo.get(j).compareTo("MCEND") != 0; j++){
+                        
                         line_args = conteudo.get(j).split(" ", 2);
                         line_definicao = conteudo.get(j);
-                        line_label = conteudo.get(j).split(": ");
-                        
+                        line_label = conteudo.get(j).split("&");
                         //============================
                         //TRATAMENTO DA PRIMEIRA LINHA
                         //============================
@@ -77,12 +75,20 @@ public class Processador_de_macros {
                         //PEGA OS LABELS
                         if(macrinho.nome == null){
                             if (line_label.length > 1){
-                                line_args = line_label[1].split(" ", 2);
-                                line_label = line_label[0].split(",");
-                                for(int l = 0; l < line_label.length; ++l){
+                                //line_label = line_label[1].split(" ", 2);
+                                line_args = line_label[line_label.length - 1].split(" ", 2);
+                                line_args = line_args[1].split(" ", 2);
+                                //line_label = line_label[0].split(",");
+                                
+                                for(int l = 1; l < line_label.length - 1; ++l){
                                     line_label[l] = line_label[l].replace(" ", "");
+                                    line_label[l] = line_label[l].replace(",", "");
                                     macrinho.labels.add(line_label[l]);
                                 }
+                                line_label = line_label[line_label.length - 1].split(" ", 2);
+                                line_label[0] = line_label[0].replace(" ", "");
+                                line_label[0] = line_label[0].replace(",", "");
+                                macrinho.labels.add(line_label[0]);
                             }
                             //PEGA O NOME DA MACRO
                             macrinho.nome = line_args[0];
@@ -97,6 +103,7 @@ public class Processador_de_macros {
                         }
                         //PEGA A DEFINICAO DA MACRO
                         else {
+                            line_definicao = line_definicao.replace("&", "");
                             macrinho.definicao.add(line_definicao);
                         }
                         macrinho.MCEND = j+1;
@@ -118,28 +125,39 @@ public class Processador_de_macros {
             //2 PASSAGEM - EXPANSÃO
             //=====================
             
+            boolean flag_chamada = false;
             
             for (int i = 0; i < conteudo.size(); ++i){
                 Macro macro_chamada = new Macro();
+                String[] aux_labels = conteudo.get(i).split("&");
                 String[] aux_linha = conteudo.get(i).split(" ", 2);
                 
                 //SE TEM LABEL
-                //if (aux_linha[0].endsWith("xxx")){
-                    //------------------------
-                //}
+                if (aux_labels.length > 1){
+                    for (int j = 1; j < aux_labels.length - 1; ++j){
+                        macro_chamada.labels.add(aux_labels[j]);
+                    }
+                    
+                    aux_linha = aux_labels[aux_labels.length - 1].split(" ", 2);
+                    aux_linha = aux_linha[aux_labels.length - 1].split(" ", 2);
+                    
+                    aux_labels = aux_labels[aux_labels.length - 1].split(" ", 2);
+                    macro_chamada.labels.add(aux_labels[0]);
+                }
                 
                 for (Macro iterator : macros) {
                     
                     //SE NÃO TEM LABEL
                     if (aux_linha[0].compareTo(iterator.nome) == 0){
-
+                        flag_chamada = true;
+                        
                         //PASSA OS ARGUMENTOS P/ A CHAMADA
                         macro_chamada.nome = aux_linha[0];
 
-                        String[] aux_labels = aux_linha[1].split(",");
-                        for(int l = 0; l < aux_labels.length; ++l){
-                            aux_labels[l] = aux_labels[l].replace(" ", "");
-                            macro_chamada.argumentos.add(aux_labels[l]);
+                        String[] aux_argumentos = aux_linha[1].split(",");
+                        for(int l = 0; l < aux_argumentos.length; ++l){
+                            aux_argumentos[l] = aux_argumentos[l].replace(" ", "");
+                            macro_chamada.argumentos.add(aux_argumentos[l]);
                         }
 
                         //PASSA A DEFINIÇÃO P/ A CHAMADA
@@ -158,13 +176,22 @@ public class Processador_de_macros {
                                 //System.out.println("REPLACE = " + replace);
                                 //System.out.println("CHAMADA DEFINICAO(K) = " + macro_chamada.definicao.get(l));
                                 if (replace.compareTo(macro_chamada.definicao.get(l)) != 0){
-                                    System.out.println("DIFERENTE");
+                                    //System.out.println("DIFERENTE");
                                     macro_chamada.definicao.set(l, replace);
                                 }
                             }
-
                             //System.out.println(macro_chamada.definicao.get(l).replace("ARG1", "BUNDA"));
-                            //System.out.println("REPLACE - " + replace);
+                        }
+                        
+                        //SUBSTITUI AS LABELS
+                        for(int l = 0; l < macro_chamada.labels.size(); ++l){
+                            for (int k = 0; k < macro_chamada.labels.size(); ++k){
+                                
+                                String replace = macro_chamada.definicao.get(l).replace(iterator.labels.get(k), macro_chamada.labels.get(k));
+                                if (replace.compareTo(macro_chamada.definicao.get(l)) != 0){
+                                    macro_chamada.definicao.set(l, replace);
+                                }
+                            }
                         }
 
                         //EXPANDE A MACRO
@@ -173,18 +200,24 @@ public class Processador_de_macros {
                             escrever.newLine();
                         }
                     }
-
-                    //NÃO É UMA CHAMADA DE MACRO
-                    //ESCREVENDO NO ARQUIVO DE SAIDA
-                    else {
-                        escrever.write(conteudo.get(i));
-                        escrever.newLine();
-                    }
                 }
+                //NÃO É UMA CHAMADA DE MACRO
+                //ESCREVENDO NO ARQUIVO DE SAIDA
+                if (!flag_chamada) {
+                    escrever.write(conteudo.get(i));
+                    escrever.newLine();
+                }
+                flag_chamada = false;
             }
             
-            //=====================
+            
+            
+            macros.forEach(iterator -> {
+                iterator.print();
+            });
+            //=========================
             //SALVANDO ARQUIVO DE SAIDA
+            //=========================
             escrever.close();
             fileWriter.close();
         }

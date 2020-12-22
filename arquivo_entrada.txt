@@ -4,17 +4,18 @@ CREUSA
 PULO: PULADOR
 jz 15 //comentario
 
-SUPER_MACRO e, f, g
+SUPERMACRO e, f, g
 MACRINHA a, b, c, d
 
 add @2
 
 MCDEFN
-MACRINHA arg1, arg2, arg3, arg4
-label1: LOAD arg1
+&label1 MACRINHA arg1, arg2, arg3, arg4
+&label1 LOAD arg1
 br arg1
 brnz arg3
 br arg4
+SUPERMACRO VERMELHOR, VERMELHOR, VERMELHOR
 jz arg1
 add arg3
 ADD arg2
@@ -24,7 +25,7 @@ add @20 10
 sub @30 10
 
 MCDEFN
-supermacro vari1, vari2, vari3
+supermacro vari1,vari2,vari3
 add vari3
 sub vari2
 mult vari1
