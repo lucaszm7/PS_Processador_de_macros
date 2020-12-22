@@ -23,8 +23,6 @@ public class Processador_de_macros {
         
         //VETOR QUE ARMAZENA O CONTEUDO DO ARQUIVO DE ENTRADA
         List<String> conteudo = new ArrayList<>();
-        List<String> lista_escrita = new ArrayList<>();
-        
         
         try {
             //INICIALIZA ARQUIVO DE SAIDA
@@ -45,10 +43,9 @@ public class Processador_de_macros {
                 String line = reader.nextLine();
                 line = line.toUpperCase();
                 //SEM LINHA VAZIA
-                //if(!line.isEmpty()){
+                if(!line.isEmpty()){
                     conteudo.add(line);
-                //}
-                
+                }
             }
             
             //============================
@@ -69,6 +66,7 @@ public class Processador_de_macros {
                         line_args = conteudo.get(j).split(" ", 2);
                         line_definicao = conteudo.get(j);
                         line_label = conteudo.get(j).split("&");
+                        
                         //============================
                         //TRATAMENTO DA PRIMEIRA LINHA
                         //============================
@@ -76,10 +74,8 @@ public class Processador_de_macros {
                         //PEGA OS LABELS
                         if(macrinho.nome == null){
                             if (line_label.length > 1){
-                                //line_label = line_label[1].split(" ", 2);
                                 line_args = line_label[line_label.length - 1].split(" ", 2);
                                 line_args = line_args[1].split(" ", 2);
-                                //line_label = line_label[0].split(",");
                                 
                                 for(int l = 1; l < line_label.length - 1; ++l){
                                     line_label[l] = line_label[l].replace(" ", "");
@@ -113,21 +109,15 @@ public class Processador_de_macros {
                 }
             }
             
+            //REMOVE AS DEFINIÇÕES
             for (int i = macros.size() - 1; i >= 0; --i){
-                //System.out.println("I = " + i);
-                //System.out.println("MCDEFN = " + macros.get(i).MCDEFN);
-                //System.out.println("MCEND = " + macros.get(i).MCEND);
                 conteudo.removeAll(conteudo.subList(macros.get(i).MCDEFN, macros.get(i).MCEND));
             }
-
-            //conteudo.removeAll(conteudo.subList(i, piranha+1));
             
             //=====================
             //2 PASSAGEM - EXPANSÃO
             //=====================
-            
-            boolean flag_chamada = false;
-            
+                        
             for (int i = 0; i < conteudo.size(); ++i){
                 Macro macro_chamada = new Macro();
                 String[] aux_labels = conteudo.get(i).split("&");
@@ -150,9 +140,7 @@ public class Processador_de_macros {
                     
                     //SE NÃO TEM LABEL
                     if (aux_linha[0].compareTo(iterator.nome) == 0){
-                        
-                        flag_chamada = true;
-                        
+                                                
                         //PASSA OS ARGUMENTOS P/ A CHAMADA
                         macro_chamada.nome = aux_linha[0];
 
@@ -165,30 +153,21 @@ public class Processador_de_macros {
                         //PASSA A DEFINIÇÃO P/ A CHAMADA
                         for(int l = 0; l < iterator.definicao.size(); ++l){
                             macro_chamada.definicao.add(iterator.definicao.get(l));
-                            //System.out.println(macro_chamada.definicao.get(l));
                         }
 
                         //SUBSTITUI OS ARGUMENTOS
                         for(int l = 0; l < macro_chamada.definicao.size(); ++l){
-                            //macro_chamada.definicao.set(l, macro_chamada.definicao.get(l).replace(macro.labels.get(l), macro_chamada.labels.get(l)));
                             for (int k = 0; k < macro_chamada.argumentos.size(); ++k){
                                 String replace = macro_chamada.definicao.get(l).replace(iterator.argumentos.get(k), macro_chamada.argumentos.get(k));
-                                //System.out.println("L = " + l);
-                                //System.out.println("K = " + k);
-                                //System.out.println("REPLACE = " + replace);
-                                //System.out.println("CHAMADA DEFINICAO(K) = " + macro_chamada.definicao.get(l));
                                 if (replace.compareTo(macro_chamada.definicao.get(l)) != 0){
-                                    //System.out.println("DIFERENTE");
                                     macro_chamada.definicao.set(l, replace);
                                 }
                             }
-                            //System.out.println(macro_chamada.definicao.get(l).replace("ARG1", "BUNDA"));
                         }
                         
                         //SUBSTITUI AS LABELS
                         for(int l = 0; l < macro_chamada.labels.size(); ++l){
                             for (int k = 0; k < macro_chamada.labels.size(); ++k){
-                                
                                 String replace = macro_chamada.definicao.get(l).replace(iterator.labels.get(k), macro_chamada.labels.get(k));
                                 if (replace.compareTo(macro_chamada.definicao.get(l)) != 0){
                                     macro_chamada.definicao.set(l, replace);
@@ -200,22 +179,14 @@ public class Processador_de_macros {
                         //EXPANDE A MACRO
                         for(int l = 0; l < macro_chamada.definicao.size(); ++l){
                             conteudo.add(i+l, macro_chamada.definicao.get(l));
-                            System.out.println(conteudo.get(i+l));
-                            lista_escrita.add(macro_chamada.definicao.get(l));
                         }
+                        //Volta ao inicio do arquivo - PARA EXPANDIR MACROS DENTRO DE MACROS
                         i = 0;
                     }
                 }
-                //NÃO É UMA CHAMADA DE MACRO
-                //ESCREVENDO NO ARQUIVO DE SAIDA
-                //if (!flag_chamada) {
-                  //  lista_escrita.add(conteudo.get(i));
-                //}
-                flag_chamada = false;
             }
             
-            
-            
+            //ESCREVENDO NO ARQUIVO FINAL
             for (String iterator : conteudo){
                 escrever.write(iterator);
                 escrever.newLine();
@@ -224,6 +195,7 @@ public class Processador_de_macros {
             macros.forEach(iterator -> {
                 iterator.print();
             });
+            
             //=========================
             //SALVANDO ARQUIVO DE SAIDA
             //=========================
